@@ -1,35 +1,29 @@
-
 var canvas = document.getElementById('myCanvas');
+canvas.height = window.innerHeight * (3/4);
+canvas.width = window.innerWidth * (3/4);
 
-canvas.height = window.innerHeight /2;
-canvas.width = window.innerWidth /2;
-//initialize variables
-var x=canvas.width/2,
-    y=30,
-    dx= 2,
-    dy= 10,
+//initialize variables for ball
+var x = 500,
+    y = 300,
+    dx = 2,
+    dy = 10,
     ctx,
-    r=20,
-    paddlex,
-    paddlew,
-    paddleh,
-    paddley,
+    r = 10,
     intervalId,
-//fir left and right arrow keydown
-    rightDown = false,
-    leftDown = false;
-
-function init_Paddle(){
-     paddlex = canvas.width / 2,
-     paddlew = 150,
-     paddleh = 20,
-     paddley = canvas.height - paddleh;
-}
-
-function init(){
-    ctx = canvas.getContext("2d");
-    return setInterval(draw, 100);
-}
+    canvasW = canvas.width;
+//initialize paddle
+    paddlex = canvas.width / 2,
+    paddlew = 150,
+    paddleh = 20,
+    paddley = canvas.height - paddleh,
+    canvasMinX = canvas.offsetLeft;
+    canvasMaxX =canvasMinX + canvas.width,
+    bricksRows = 15,
+    bricksCols = 15;
+    brickH = 15,
+    brickW = canvasW/bricksCols -1,
+    padding =1
+    bricks = new Array(bricksRows);
 
 function clearCanvas(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -46,46 +40,74 @@ function circle(x,y,r) {
     ctx.fill();
 }
 
-function createPaddle() {
+function createRect(x,y,w,h) {
     ctx.beginPath();
-    ctx.rect(paddlex,paddley,paddlew,paddleh);
+    ctx.rect(x,y,w,h);
     ctx.closePath();
     ctx.fill();
 }
 
 //create keyboard event fot moving paddle from keyboard
-//function keyUp(e){
-//    if(e.keyCode == 39)
-//       rightDown = false;
-//    else if(e.keyCode == 37)
-//       leftDown = false;
-//}
+//function movePaddle()
 function keyDown(e){
-    if(e.keyCode == 39)
-        paddlex += 40;
-    else if(e.keyCode == 37)
-        paddlex -= 40;
-    console.log(e.keyCode);
+//       if(paddlex  >= canvasMinX && (paddlex + paddlew) <= canvasMaxX){
+//           console.log(canvasMinX);
+//           console.log(canvasMaxX);
+//           console.log(paddlex);
+           if(e.keyCode == 39)
+               paddlex += 40;
+           else if(e.keyCode == 37)
+               paddlex -= 40;
+//       }
+
 }
-//trigger respective events when left and right arrow  key Up or down
-//window.onkeyup = keyUp;
+function onMouseMove(e){
+    if(e.pageX > canvasMinX && e.pageX+paddlew < canvasMaxX){
+        paddlex = e.pageX - canvasMinX;
+    }
+}
+
+window.onmousemove = onMouseMove;
 window.onkeydown = keyDown;
 
-//function movePaddle(){
-//    //move paddle by Left and Right arrow keys
-//    if(leftDown)
-//        paddlex -= 40;
-//    else if(rightDown)
-//        paddlex += 40;
-//}
+// draw bricks
+function drawBricks(){
+    for(var i = 0 ; i < bricksRows ; i++){
+        for(var j = 0; j < bricksCols ; j++){
+            if(bricks[i][j] == 1){
+                createRect( j*(brickW+padding)+padding, i*(brickH+padding)+padding, brickW, brickH);
+            }
+        }
+    }
+}
 
-//draw ball function
+function initBricks(){
+    for(var i = 0 ; i < bricksRows ; i++){
+        bricks[i] = new Array(bricksCols);
+        for(var j = 0 ; j < bricksCols ; j++){
+            bricks[i][j] = 1;
+        }
+    }
+
+}
+
+//main draw function, alla functions begins here
 function draw() {
    clearCanvas();
    circle(x,y,r);
-   createPaddle();
-//   movePaddle();
-//ball bounce when it touches canvas edge
+   createRect(paddlex,paddley,paddlew,paddleh);
+    //have we hit a brick?
+    var rowheight = brickH + padding;
+    var colwidth = brickW + padding;
+    var row = Math.floor(y/rowheight);
+    var col = Math.floor(x/colwidth);
+    //if so, reverse the ball and mark the brick as broken
+    if (y < bricksRows * rowheight && row >= 0 && col >= 0 && bricks[row][col] == 1) {
+        dy = -dy;
+        bricks[row][col] = 0;
+    }
+   drawBricks(bricks)
+    //ball bounce when it touches canvas edge
     if(x+r+dx > canvas.width || x-r+dx < 0)
         dx = -dx;
     if(y-r+dy < 0)
@@ -100,5 +122,10 @@ function draw() {
     x+=dx;
     y+=dy;
 }
-init_Paddle();
 intervalId = init();
+function init() {
+    ctx = canvas.getContext("2d");
+    initBricks();
+    return setInterval(draw, 100);
+
+}
