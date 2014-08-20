@@ -3,10 +3,9 @@ body{
 
 }
 canvas{
+    margin: 0 auto 0 auto;
     padding-left: 0;
     padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
     display: block;
     cursor: crosshair;
     background: #7d7e7d; /* Old browsers */
@@ -17,5 +16,5 @@ canvas{
     background: -ms-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%); /* IE10+ */
     background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7d7e7d', endColorstr='#0e0e0e',GradientType=0 ); /* IE6-9 */
-
+    /*border: 7px solid orange;*/
 }
