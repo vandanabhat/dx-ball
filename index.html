@@ -2,14 +2,41 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>dx-ball</title>
+    <title>Dx-ball</title>
 
     <link rel="stylesheet" href="css/index_dxBall.css">
-
+    <script>
+        function pause(){
+            clearInterval(intervalId);
+        }
+        function play(){
+            window.intervalId = setInterval(draw, 8);
+        }
+    </script>
 </head>
 <body>
+    <div class="container">
 
-<canvas id="myCanvas"></canvas>
-<script type="text/javascript" src="js/index_dxBall.js"></script>
+        <div class="score-div" id="score-div">
+
+               <span>Score:</span>
+               <span><input type="text" id='score' value="00" disabled></span>
+
+               <span class="level" id="level">1</span>
+               <span class="level">Level:&nbsp&nbsp </span>
+
+        </div>
+
+        <div class="canvas-div">
+            <canvas id="myCanvas"></canvas>
+        </div>
+
+        <div class="button-div">
+            <button onclick="play()" class="play-btn"></button>
+            <button  onclick="pause()" class="pause-btn"></button>
+        </div>
+
+    </div>
+    <script type="text/javascript" src="js/index_dxBall.js"></script>
 </body>
 </html>
